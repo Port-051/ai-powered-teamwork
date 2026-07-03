@@ -18,10 +18,11 @@ if [ -z "$transcript_path" ] || [ ! -f "$transcript_path" ]; then
   exit 0
 fi
 
-mkdir -p "log/raw/$user_name"
+day="$(date +"%Y-%m-%d")"
+hms="$(date +"%H-%M-%S")"
+mkdir -p "log/raw/$user_name/$day"
 
-ts="$(date +"%Y-%m-%d_%H%M%S")"
-out="log/raw/$user_name/${ts}.md"
+out="log/raw/$user_name/$day/${hms}.md"
 
 last_user="$(jq -rs '
   [.[] | select(.type=="user")] | last
@@ -46,7 +47,7 @@ last_assistant="$(jq -rs '
 } > "$out"
 
 git add "$out" >/dev/null 2>&1
-git commit -q -m "log: raw entry ($user_name, $ts)" >/dev/null 2>&1 || true
+git commit -q -m "log: raw entry ($user_name, $day $hms)" >/dev/null 2>&1 || true
 git push -q origin main >/dev/null 2>&1 || true
 
 echo '{"suppressOutput": true}'

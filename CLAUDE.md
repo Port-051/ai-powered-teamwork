@@ -77,12 +77,11 @@ Hermes (포크, MIT 라이선스)                       ← 개인별 학습 엔
 - **로그 구조**:
   ```
   log/
-    raw/<git user.name>/<YYYY-MM-DD_HHMMSS>.md   ← 프롬프트 1턴 = 파일 1개. 가공 없이 그대로.
-    processed/<git user.name>/<YYYY-MM-DD>.md    ← 하루 주기로 전날치 raw를 정리해서 넣는다 (자동 push 대상 아님)
-    archive/<git user.name>/<YYYY-MM-DD_HHMMSS>.md ← processed로 옮겨져 "소비된" raw 원본을 같은 파일명으로 이동
+    raw/<git user.name>/<YYYY-MM-DD>/<HH-MM-SS>.md      ← 프롬프트 1턴 = 파일 1개. 가공 없이 그대로.
+    processed/<git user.name>/<YYYY-MM-DD>.md           ← teambrain-process 스킬이 하루치 raw를 정리해서 넣는다 (자동 push 대상 아님)
+    archive/<git user.name>/<YYYY-MM-DD>/<HH-MM-SS>.md  ← processed로 소비된 raw 원본을 같은 경로 구조로 이동
   ```
-  raw 폴더에 파일이 남아 있다는 것 자체가 "아직 processed로 안 옮겨진 것"이라는 표시가 된다.
+  raw의 날짜 폴더가 남아 있다는 것 자체가 "아직 processed로 안 옮겨진 것"이라는 표시가 된다. 날짜 폴더 단위로 옮기기 때문에 여러 팀원이 동시에 써도 충돌이 안 난다.
 - **자동 커밋/푸시는 `log/raw/<git user.name>/` 파일에 한해서만** 매 프롬프트가 끝날 때마다 확인 없이 자동으로 실행된다.
 - **그 외 전부** (코드, `log/processed/`, `log/archive/`, `port_051/`, PLAN.md 등 문서, 그 밖의 모든 파일)는 위 "실제로 저장/공유되는 작업은 항상 먼저 확인받는다" 규칙을 그대로 따른다 — 절대 자동으로 커밋/푸시하지 않는다.
-- **일일 처리(raw → processed)**: 세션 시작 시 전날 `log/raw/<user>/` 에 처리 안 된 파일이 있으면, 내용을 정리해 `log/processed/<user>/<날짜>.md`에 넣고, 원본 raw 파일은 `log/archive/<user>/`로 그대로 옮긴다 (이동 후 커밋/푸시는 일반 규칙대로 확인받고 진행).
-- 중요한 내용은 주기적으로 `port_051/` 폴더에 추출·가공해서 넣는다 (이 작업도 일반 규칙대로 확인 후 진행).
+- **일일 처리(raw → processed → archive)**: `/teambrain-process` 스킬로 수행한다. 팀원 전체의 `log/raw/*/*/` 를 훑어서 사람별 요약을 `log/processed/<user>/<날짜>.md`에 쓰고, 팀 전체가 알아야 할 중요한 내용은 `port_051/`에 추출·가공해 넣은 뒤, 처리에 쓰인 raw 폴더를 통째로 `log/archive/<user>/<날짜>/`로 옮긴다. (이 스킬이 만든 변경사항의 commit/push는 일반 규칙대로 확인 후 진행.)

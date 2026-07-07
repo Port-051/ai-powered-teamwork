@@ -57,12 +57,14 @@ Phase 4  운영·배포                            Docker Compose / AWS / 시크
 ### 부품 A. Mattermost — 담당 김동연 (인프라)
 > 우리가 만들 게 아니라 설치해서 쓰는 메신저
 
-- [ ] A-1 Docker로 내 PC에 Mattermost 띄우기
+- [x] A-1 Docker로 내 PC에 Mattermost 띄우기 (2026-07-07, 여운호가 로컬 실습으로 완료 — Apple Silicon은 `platform: linux/amd64` 필요, 정리본 `experiments/hermes-mattermost/2026-07-07/shared/NOTES.md`)
 - [ ] A-2 팀·채널 만들고 카톡처럼 써보기
 - [ ] A-3 봇 계정 만들고, 봇 토큰으로 REST API 호출해 **채널에 메시지 보내기** 성공
 - [ ] A-4 WebSocket 연결해 **누가 메시지 쓰면 내 프로그램이 수신** 성공
 
 완료 기준: 내 프로그램이 메시지를 받고+보낼 수 있다 (멘션 왕복 뼈대 완성).
+
+> ⚠️ **2026-07-07 발견 (`port_051/open-issues.md` 참고)**: Hermes에 Mattermost/Slack 어댑터가 이미 내장돼 있어서 A-3/A-4를 밑바닥부터 새로 짤 필요가 없을 수 있음. 그대로 쓸지(A안) 직접 짤지(B안)는 8월 재결정 대상 — 로드맵 순서가 바뀔 수 있으니 진행 전 열린 이슈 확인.
 
 ### 부품 B. Hermes Agent — 담당 여운호 (AI 엔진)
 > 포크해서 심장으로 쓰는 개인 AI
@@ -94,6 +96,7 @@ Phase 4  운영·배포                            Docker Compose / AWS / 시크
 ### 3-2. 어댑터 설계  — (백엔드: 어댑터 패턴, 계층 분리)
 - 최소 목표: Mattermost 사용자·채널·스레드 → Honcho peer·workspace·session 매핑 함수
 - [ ] 완료 기준: Mattermost가 바뀌어도 엔진 코드는 안 건드리게 "번역기"가 분리돼 있다
+- ⚠️ 2026-07-07: Honcho 채택은 필수가 아님(`port_051/decisions.md` 참고, PLAN.md Phase 8은 "Mattermost DB + Hermes 기본 기억"만 채택). 또한 Hermes 내장 Mattermost 어댑터 재사용 여부(A/B안, `open-issues.md`)에 따라 이 항목 자체의 필요 범위가 달라질 수 있음.
 
 ### 3-3. 데이터·상태 모델링  — (백엔드: 데이터 모델링, 집계 쿼리)
 - 최소 목표: 사실에 `owner`, `visibility(개인/팀공유)` 필드 + "이 사람이 볼 수 있는 것만" 조회

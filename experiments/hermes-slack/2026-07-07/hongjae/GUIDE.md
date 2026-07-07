@@ -53,12 +53,12 @@ hermes setup gateway
 입력 → home channel은 비워도 됨(`/set-home`으로 나중에 지정) →
 systemd 서비스로 설치할지 물으면 **Y** (터미널 꺼도 유지됨).
 
-## 5. 모델을 무료로 맞추기 (카드 등록 피하려면 필수)
+## 5. 모델 provider 설정
 
-Anthropic "Claude Code" 로그인은 구독 플랜 한도가 아니라 별도 "extra
-usage" 결제가 필요하고, OpenRouter 유료 모델(`claude-sonnet-5` 등)도
-크레딧이 없으면 402 에러가 난다. **OpenRouter의 무료 모델**로 맞추면
-카드 등록 없이 된다:
+원하는 모델/provider로 설정하면 된다 (`hermes setup model`). 각자 쓰는
+구독/API 키에 맞춰 자유롭게 고르면 되고, 크레딧/결제가 안 걸린 상태로
+빨리 테스트만 해보고 싶으면 OpenRouter의 `:free` 모델(예:
+`nvidia/nemotron-3-super-120b-a12b:free`)도 선택지 중 하나다.
 
 ```bash
 hermes config set model.provider openrouter

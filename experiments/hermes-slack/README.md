@@ -10,7 +10,7 @@ Hermes(NousResearch/hermes-agent, MIT)를 슬랙 워크스페이스에 연결해
 experiments/hermes-slack/
   <날짜>/
     shared/      ← 팀 전체가 같이 보는 메모, 합의된 설정
-    yeounho/
+    unho/
     dongyeon/
     hongjae/
 ```

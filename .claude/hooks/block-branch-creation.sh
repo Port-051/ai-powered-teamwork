@@ -3,8 +3,11 @@
 # port_051/decisions.md 2026-07-03)이 있다. 브랜치를 새로 만드는 git 명령을 자동 차단한다.
 input=$(cat)
 cmd=$(echo "$input" | jq -r '.tool_input.command // empty')
+# 커밋 메시지 heredoc(예: cat <<'EOF' ... EOF) 안에 "git checkout -b" 같은
+# 문구가 설명용으로 들어있어도 오탐하지 않도록, 매칭 전에 heredoc 본문을 제거한다.
+scan=$(echo "$cmd" | perl -0777 -pe "s/<<-?[\"']?(\w+)[\"']?\n.*?\n\s*\1\b/<<HEREDOC_STRIPPED/gs")
 
-if echo "$cmd" | grep -qE '(^|[;&|]|\bgit )\s*checkout\s+-b\b|(^|[;&|]|\bgit )\s*switch\s+-c\b|(^|[;&|]|\bgit )\s*worktree\s+add\b|(^|[;&|]|\bgit )\s*branch\s+[^-[:space:]]'; then
+if echo "$scan" | grep -qE '(^|[;&|]|\bgit )\s*checkout\s+-b\b|(^|[;&|]|\bgit )\s*switch\s+-c\b|(^|[;&|]|\bgit )\s*worktree\s+add\b|(^|[;&|]|\bgit )\s*branch\s+[^-[:space:]]'; then
   cat <<'JSON'
 {
   "hookSpecificOutput": {

@@ -69,7 +69,7 @@ if grep -Eiq "$secret_pattern" "$out"; then
 fi
 
 git add "$out" >/dev/null 2>&1
-git commit -q -m "log: raw entry ($user_name, $day $hms)" >/dev/null 2>&1 || true
+git commit -q -m "log: raw entry ($user_name, $day $hms)" -- "$out" >/dev/null 2>&1 || true
 git pull --rebase --quiet origin main >/dev/null 2>&1 || git rebase --abort >/dev/null 2>&1 || true
 if ! git push -q origin main >/dev/null 2>&1; then
   echo '{"systemMessage": "로그 push가 실패했습니다 (네트워크 또는 충돌). 로컬에는 커밋되어 있으니, 다음 턴에서 다시 시도되거나 git status로 직접 확인해주세요."}'

@@ -147,12 +147,14 @@ Phase 2-1/2-2 논의를 단계별 세그먼트로 정리. **1차는 후보 2개�
 
 ---
 
-## Phase 6: 라이선스 전략 (Legal) — 2026-07-02 실파일 확인 완료
+## Phase 6: 라이선스 전략 (Legal) — 2026-07-02 실파일 확인, 2026-07-08 재확인·정정
 
 | 자산 | 라이선스 | 우리 사용 방식 | 안전? |
 |---|---|---|---|
 | **Hermes** | MIT | 포크·수정·상업화 자유 (저작권 고지만 포함) | ✅ |
-| **Mattermost** | 소스=AGPL v3.0 / 바이너리=MIT | **순정 설치 + 외부 API 연동만** (소스 미개조) | ✅ |
+| **Mattermost** | 서버 대부분=AGPL v3.0, `server/public/`·`webapp/`·`server/templates/`·`server/i18n/`(Admin Tools/Configuration Files)만 Apache 2.0 | **순정 설치 + 외부 API 연동만** (소스 미개조) | ✅ |
+
+> **2026-07-08 정정**: 이전 버전에 "바이너리=MIT"라고 적혀 있었으나, 공식 `LICENSE.txt`([mattermost/mattermost](https://github.com/mattermost/mattermost/blob/master/LICENSE.txt)) 확인 결과 MIT라는 표현은 없고, 일부 디렉터리만 Apache 2.0으로 분리돼 있음을 확인해 정정했다(상세 근거: `port_051/mattermost-api-deep-dive.md` 06절). LICENSE.txt는 "Admin Tools/Configuration Files(Apache 2.0 부분)만 쓰고 소스를 개조하지 않은 애플리케이션"에는 AGPL 카피레프트를 집행하지 않겠다고 명시하는데, 우리 시나리오(REST/WebSocket API만 호출, 소스에 링크조차 안 함)는 이보다 더 안전한 케이스로 보이나 이를 명시적으로 확인해주는 공식 문장은 못 찾았다 — 상업 출시 전 법률 전문가 최종 검토 필요(6-1과 동일한 유보).
 
 **지켜야 할 제약 (개발 착수 시 준수):**
 1. Mattermost 서버 소스를 **개조·재배포하지 않는다** (AGPL 소스공개 의무 회피)

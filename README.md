@@ -1,5 +1,17 @@
 # TeamBrain
 
+## 열린 질문
+
+- **저희 목표 중 하나는 "팀원 각자에게 자신을 학습하는 개인 AI가 붙는 것"인데, 서버 한 대에
+  Hermes를 하나만 띄워서 팀 전체를 처리하는 방식으로는 이 목표를 달성하기 어렵다는 것을
+  확인했습니다. 이 부분을 어떤 방식으로 해결하면 좋을지 여쭤보고 싶습니다.**
+  Hermes 소스 코드를 분석해보니, 대화 기록 자체는 팀원별로 잘 나뉘어 저장되지만, "이
+  사람은 이런 성향이다" 같은 학습된 요약 정보(MEMORY.md/USER.md)는 팀원 구분 없이 Hermes
+  프로그램 전체에 단 하나만 존재하는 구조였습니다. 그래서 서버 하나로 팀 전체를 처리하면
+  팀원들의 학습 정보가 한 파일에 섞여버리게 됩니다. 근거가 된 코드 분석은
+  [`experiments/hermes-slack/2026-07-08/dongyeon/hermes-source-analysis.md`](./experiments/hermes-slack/2026-07-08/dongyeon/hermes-source-analysis.md)
+  7번 항목에 정리해두었습니다. PLAN.md Phase 8에서 팀/멘토님과 함께 결정하고자 합니다.
+
 **Port_051 · SW Maestro 17기 (부산)**
 팀원: 여운호 · 김동연 · 신홍재 / 멘토: 김선만
 

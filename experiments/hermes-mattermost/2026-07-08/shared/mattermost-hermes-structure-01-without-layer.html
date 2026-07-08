@@ -1,0 +1,266 @@
+<title>Mattermost × Hermes 구조도 (팀 지능 레이어 제외)</title>
+<style>
+  :root {
+    --bg: #f7f5f1;
+    --surface: #ffffff;
+    --ink: #22201c;
+    --ink-dim: #63594f;
+    --line: #ddd6cb;
+    --accent: #b45309;
+    --accent-soft: #f1e4d3;
+    --mono-bg: #efeae1;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #1b1815;
+      --surface: #26221d;
+      --ink: #f1ece3;
+      --ink-dim: #ab9f8e;
+      --line: #3d372e;
+      --accent: #e0954f;
+      --accent-soft: #3a2c1c;
+      --mono-bg: #201c17;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #1b1815;
+    --surface: #26221d;
+    --ink: #f1ece3;
+    --ink-dim: #ab9f8e;
+    --line: #3d372e;
+    --accent: #e0954f;
+    --accent-soft: #3a2c1c;
+    --mono-bg: #201c17;
+  }
+  :root[data-theme="light"] {
+    --bg: #f7f5f1;
+    --surface: #ffffff;
+    --ink: #22201c;
+    --ink-dim: #63594f;
+    --line: #ddd6cb;
+    --accent: #b45309;
+    --accent-soft: #f1e4d3;
+    --mono-bg: #efeae1;
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: -apple-system, "Pretendard", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+    padding: 48px 20px 80px;
+  }
+  .wrap {
+    max-width: 720px;
+    margin: 0 auto;
+  }
+  header {
+    margin-bottom: 40px;
+  }
+  .eyebrow {
+    font-size: 12px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--accent);
+    font-weight: 700;
+    margin: 0 0 10px;
+  }
+  h1 {
+    font-size: 26px;
+    line-height: 1.35;
+    margin: 0 0 10px;
+    text-wrap: balance;
+    letter-spacing: -0.01em;
+  }
+  .sub {
+    color: var(--ink-dim);
+    font-size: 15px;
+    line-height: 1.6;
+    max-width: 60ch;
+    margin: 0;
+  }
+
+  .diagram {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0;
+    margin: 44px 0 48px;
+  }
+
+  .node {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 20px 22px;
+    position: relative;
+  }
+  .node .tag {
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--accent);
+    font-weight: 700;
+    margin: 0 0 6px;
+  }
+  .node h2 {
+    font-size: 18px;
+    margin: 0 0 8px;
+  }
+  .node p {
+    font-size: 13.5px;
+    line-height: 1.65;
+    color: var(--ink-dim);
+    margin: 0;
+  }
+  .node .role {
+    display: inline-block;
+    margin-top: 12px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--accent);
+    background: var(--accent-soft);
+    padding: 3px 10px;
+    border-radius: 100px;
+  }
+
+  .arrow {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 8px 0;
+    gap: 2px;
+  }
+  .arrow .line {
+    width: 1px;
+    height: 22px;
+    background: var(--line);
+  }
+  .arrow .label {
+    font-size: 12px;
+    color: var(--ink-dim);
+    text-align: center;
+    line-height: 1.5;
+    max-width: 44ch;
+  }
+  .arrow .caret {
+    width: 8px;
+    height: 8px;
+    border-right: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+    transform: rotate(45deg);
+  }
+  .arrow.back {
+    order: 1;
+  }
+
+  .bidir {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    padding: 10px 0;
+  }
+  .bidir .col {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+  }
+  .bidir .line {
+    width: 1px;
+    height: 26px;
+    background: var(--line);
+  }
+  .bidir .caret-down {
+    width: 7px; height: 7px;
+    border-right: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+    transform: rotate(45deg);
+  }
+  .bidir .caret-up {
+    width: 7px; height: 7px;
+    border-left: 1px solid var(--line);
+    border-top: 1px solid var(--line);
+    transform: rotate(45deg);
+  }
+  .bidir .label {
+    font-size: 12px;
+    color: var(--ink-dim);
+    text-align: center;
+  }
+
+  .note {
+    border-left: 3px solid var(--accent);
+    background: var(--accent-soft);
+    padding: 16px 18px;
+    border-radius: 0 8px 8px 0;
+    font-size: 13.5px;
+    line-height: 1.7;
+    color: var(--ink);
+  }
+  .note strong { color: var(--accent); }
+
+  code {
+    font-family: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+    background: var(--mono-bg);
+    padding: 1px 6px;
+    border-radius: 4px;
+    font-size: 0.9em;
+  }
+</style>
+
+<div class="wrap">
+  <header>
+    <p class="eyebrow">TeamBrain · 팀 지능 레이어 제외 버전</p>
+    <h1>Mattermost ↔ Hermes ↔ LLM API<br>지금 세 시스템만 있을 때의 관계</h1>
+    <p class="sub">우리가 만들 팀 지능 레이어를 아직 얹지 않은 상태 — Hermes가 Mattermost에 붙어서 LLM API를 호출하는 최소 구조.</p>
+  </header>
+
+  <div class="diagram">
+    <div class="node">
+      <p class="tag">접점 · 메신저</p>
+      <h2>Mattermost</h2>
+      <p>팀원이 <code>@봇이름</code>을 멘션하는 채널/DM. 대화·결정이 실제로 오가는 화면. 데이터는 자체 서버 Postgres DB에 그대로 저장됨.</p>
+      <span class="role">사람이 보는 유일한 화면</span>
+    </div>
+
+    <div class="bidir">
+      <div class="col">
+        <span class="label">멘션 감지<br>(WebSocket <code>posted</code> 이벤트)</span>
+        <div class="line"></div>
+        <div class="caret-down"></div>
+      </div>
+      <div class="col">
+        <span class="label">답장 전송<br>(REST API <code>POST /posts</code>)</span>
+        <div class="caret-up"></div>
+        <div class="line"></div>
+      </div>
+    </div>
+
+    <div class="node">
+      <p class="tag">엔진 · 로직</p>
+      <h2>Hermes</h2>
+      <p>대화방(채널/DM) 단위로 세션을 나누고, 그 방의 기억(MEMORY.md·USER.md·session_search)을 관리하며 프롬프트를 조립하는 뼈대. <strong>스스로 생각해서 답을 만들지는 않음.</strong></p>
+      <span class="role">세션 관리 · 기억 · 프롬프트 조립</span>
+    </div>
+
+    <div class="arrow">
+      <div class="line"></div>
+      <p class="label">응답이 필요한 순간에만<br>조립된 프롬프트를 API로 전달</p>
+      <div class="caret"></div>
+    </div>
+
+    <div class="node">
+      <p class="tag">두뇌 · 외부 서비스</p>
+      <h2>LLM API<br><span style="font-weight:400; font-size:15px; color:var(--ink-dim);">(설정한 provider — Claude 등)</span></h2>
+      <p>실제로 "생각해서" 답을 만드는 부분. Hermes가 어떤 모델을 쓸지는 <code>hermes config set model.provider</code>로 바꿔 끼울 수 있는 설정값일 뿐, Hermes 로직 자체와는 분리돼 있음.</p>
+      <span class="role">답변 생성만 담당</span>
+    </div>
+  </div>
+
+  <div class="note">
+    <strong>이 구조의 한계</strong> — Hermes 세션은 사람이 아니라 <em>대화방</em> 단위로 격리된다. 채널 A에서 나온 이야기를 채널 B나 다른 사람의 DM은 전혀 모른다. 팀원 여러 명의 지식을 엮어서 팀 전체가 공유하게 만드는 건, 지금 이 세 시스템 중 누구의 역할도 아니다 — 그게 우리가 새로 만드는 팀 지능 레이어가 필요한 이유.
+  </div>
+</div>

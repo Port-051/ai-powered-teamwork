@@ -1,0 +1,382 @@
+<title>Mattermost × Hermes 구조도 (팀 지능 레이어 포함)</title>
+<style>
+  :root {
+    --bg: #f7f5f1;
+    --surface: #ffffff;
+    --ink: #22201c;
+    --ink-dim: #63594f;
+    --line: #ddd6cb;
+    --accent: #b45309;
+    --accent-soft: #f1e4d3;
+    --mono-bg: #efeae1;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #1b1815;
+      --surface: #26221d;
+      --ink: #f1ece3;
+      --ink-dim: #ab9f8e;
+      --line: #3d372e;
+      --accent: #e0954f;
+      --accent-soft: #3a2c1c;
+      --mono-bg: #201c17;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #1b1815;
+    --surface: #26221d;
+    --ink: #f1ece3;
+    --ink-dim: #ab9f8e;
+    --line: #3d372e;
+    --accent: #e0954f;
+    --accent-soft: #3a2c1c;
+    --mono-bg: #201c17;
+  }
+  :root[data-theme="light"] {
+    --bg: #f7f5f1;
+    --surface: #ffffff;
+    --ink: #22201c;
+    --ink-dim: #63594f;
+    --line: #ddd6cb;
+    --accent: #b45309;
+    --accent-soft: #f1e4d3;
+    --mono-bg: #efeae1;
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: -apple-system, "Pretendard", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+    padding: 48px 20px 80px;
+  }
+  .wrap {
+    max-width: 760px;
+    margin: 0 auto;
+  }
+  header {
+    margin-bottom: 40px;
+  }
+  .eyebrow {
+    font-size: 12px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--accent);
+    font-weight: 700;
+    margin: 0 0 10px;
+  }
+  h1 {
+    font-size: 26px;
+    line-height: 1.35;
+    margin: 0 0 10px;
+    text-wrap: balance;
+    letter-spacing: -0.01em;
+  }
+  .sub {
+    color: var(--ink-dim);
+    font-size: 15px;
+    line-height: 1.6;
+    max-width: 60ch;
+    margin: 0;
+  }
+
+  .diagram {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0;
+    margin: 44px 0 48px;
+  }
+
+  .node {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 20px 22px;
+    position: relative;
+  }
+  .node .tag {
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--accent);
+    font-weight: 700;
+    margin: 0 0 6px;
+  }
+  .node h2 {
+    font-size: 18px;
+    margin: 0 0 8px;
+  }
+  .node p {
+    font-size: 13.5px;
+    line-height: 1.65;
+    color: var(--ink-dim);
+    margin: 0;
+  }
+  .node .role {
+    display: inline-block;
+    margin-top: 12px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--accent);
+    background: var(--accent-soft);
+    padding: 3px 10px;
+    border-radius: 100px;
+  }
+
+  .arrow {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 8px 0;
+    gap: 2px;
+  }
+  .arrow .line {
+    width: 1px;
+    height: 22px;
+    background: var(--line);
+  }
+  .arrow .label {
+    font-size: 12px;
+    color: var(--ink-dim);
+    text-align: center;
+    line-height: 1.5;
+    max-width: 44ch;
+  }
+  .arrow .caret {
+    width: 8px;
+    height: 8px;
+    border-right: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+    transform: rotate(45deg);
+  }
+  .arrow.back {
+    order: 1;
+  }
+
+  .bidir {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    padding: 10px 0;
+  }
+  .bidir .col {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+  }
+  .bidir .line {
+    width: 1px;
+    height: 26px;
+    background: var(--line);
+  }
+  .bidir .caret-down {
+    width: 7px; height: 7px;
+    border-right: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+    transform: rotate(45deg);
+  }
+  .bidir .caret-up {
+    width: 7px; height: 7px;
+    border-left: 1px solid var(--line);
+    border-top: 1px solid var(--line);
+    transform: rotate(45deg);
+  }
+  .bidir .label {
+    font-size: 12px;
+    color: var(--ink-dim);
+    text-align: center;
+  }
+
+  .note {
+    border-left: 3px solid var(--accent);
+    background: var(--accent-soft);
+    padding: 16px 18px;
+    border-radius: 0 8px 8px 0;
+    font-size: 13.5px;
+    line-height: 1.7;
+    color: var(--ink);
+  }
+  .note strong { color: var(--accent); }
+
+  code {
+    font-family: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+    background: var(--mono-bg);
+    padding: 1px 6px;
+    border-radius: 4px;
+    font-size: 0.9em;
+  }
+
+  /* 팀 지능 레이어 — 강조 노드 */
+  .node.layer {
+    border: 1.5px solid var(--accent);
+    background: linear-gradient(180deg, var(--accent-soft), var(--surface) 60%);
+  }
+  .node.layer .tag { color: var(--accent); }
+  .subgrid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-top: 14px;
+  }
+  .subcard {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 12px 12px 13px;
+  }
+  .subcard .num {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--accent);
+    display: block;
+    margin-bottom: 4px;
+  }
+  .subcard .name {
+    font-size: 13px;
+    font-weight: 600;
+    display: block;
+    margin-bottom: 5px;
+  }
+  .subcard .desc {
+    font-size: 11.5px;
+    line-height: 1.55;
+    color: var(--ink-dim);
+  }
+
+  /* 개인 세션 두 갈래 (여운호 / 김동연) */
+  .split {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+  .split .node { padding: 16px 16px 18px; }
+  .split .node h2 { font-size: 15.5px; }
+  .split .node p { font-size: 12.5px; }
+  .connector {
+    display: flex;
+    justify-content: center;
+    padding: 4px 0 6px;
+  }
+  .connector svg { display: block; overflow: visible; }
+  .connector-label {
+    text-align: center;
+    font-size: 12px;
+    color: var(--ink-dim);
+    margin: 2px 0 12px;
+  }
+  .bridge-note {
+    font-size: 11.5px;
+    color: var(--accent);
+    font-weight: 600;
+    margin-top: 10px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .bridge-note::before {
+    content: "";
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--accent);
+    flex: none;
+  }
+</style>
+
+<div class="wrap">
+  <header>
+    <p class="eyebrow">TeamBrain · 팀 지능 레이어 포함 버전</p>
+    <h1>Mattermost ↔ 팀 지능 레이어 ↔ Hermes ↔ LLM API<br>우리가 새로 만드는 부분을 끼운 구조</h1>
+    <p class="sub">Mattermost와 Hermes 사이, 그리고 팀원별 Hermes 세션 사이에 우리 레이어가 끼어들어 "대화방 단위로 격리돼 있던 지식"을 팀 전체가 공유하도록 엮는다. (PLAN.md Phase 4 ①②③, 통합 방식 A/B안은 8월 재결정 예정)</p>
+  </header>
+
+  <div class="diagram">
+    <div class="node">
+      <p class="tag">접점 · 메신저</p>
+      <h2>Mattermost</h2>
+      <p>팀원이 <code>@봇이름</code>을 멘션하는 채널/DM. 대화·결정이 실제로 오가는 화면. 데이터는 자체 서버 Postgres DB에 그대로 저장됨.</p>
+      <span class="role">사람이 보는 유일한 화면</span>
+    </div>
+
+    <div class="bidir">
+      <div class="col">
+        <span class="label">멘션 감지<br>(WebSocket <code>posted</code> 이벤트)</span>
+        <div class="line"></div>
+        <div class="caret-down"></div>
+      </div>
+      <div class="col">
+        <span class="label">답장 전송<br>(REST API <code>POST /posts</code>)</span>
+        <div class="caret-up"></div>
+        <div class="line"></div>
+      </div>
+    </div>
+
+    <div class="node layer">
+      <p class="tag">★ 우리가 새로 만드는 원본 코드 ★</p>
+      <h2>팀 지능 레이어</h2>
+      <p>Mattermost와 Hermes 사이(또는 여러 팀원의 Hermes 세션 사이)에서 대화를 가로채, 팀 지식으로 남길지 판별하고 구조화해서 다른 팀원 세션에도 흘려보낸다. 별도 프로세스로 동작 (Mattermost 플러그인 아님 — 라이선스 원칙).</p>
+      <div class="subgrid">
+        <div class="subcard">
+          <span class="num">①</span>
+          <span class="name">프라이버시 필터</span>
+          <span class="desc">채널 타입(DM/공개) + 룰베이스·AI 판별로 "팀 지식 vs 개인 대화" 구분</span>
+        </div>
+        <div class="subcard">
+          <span class="num">②</span>
+          <span class="name">지식 체계화 엔진</span>
+          <span class="desc">비정형 대화를 결정사항·진행상황·열린질문 같은 구조로 요약·축적</span>
+        </div>
+        <div class="subcard">
+          <span class="num">③</span>
+          <span class="name">개인↔팀 지식 브릿지</span>
+          <span class="desc">권한(채널 멤버십)을 상속받아, 누구의 세션에 어떤 팀 지식을 보여줄지 결정</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="connector">
+      <svg width="260" height="46" viewBox="0 0 260 46">
+        <path d="M 130 0 L 130 12 M 130 12 L 20 12 L 20 40 M 130 12 L 240 12 L 240 40"
+              fill="none" stroke="var(--line)" stroke-width="1"/>
+        <path d="M 20 40 l -4 -8 h 8 z" fill="var(--line)"/>
+        <path d="M 240 40 l -4 -8 h 8 z" fill="var(--line)"/>
+      </svg>
+    </div>
+    <p class="connector-label">③이 팀원별로 걸러진 지식을 각자의 세션에 주입</p>
+
+    <div class="split">
+      <div class="node">
+        <p class="tag">엔진 · 로직 (여운호)</p>
+        <h2>Hermes 세션 A</h2>
+        <p>여운호의 채널/DM 세션. 팀 지능 레이어가 흘려준 지식이 이 세션의 맥락에도 함께 들어옴.</p>
+        <span class="bridge-note">공유 지식 반영됨</span>
+      </div>
+      <div class="node">
+        <p class="tag">엔진 · 로직 (김동연)</p>
+        <h2>Hermes 세션 B</h2>
+        <p>김동연의 채널/DM 세션. 원래는 A의 대화를 몰랐지만, 레이어를 거쳐 같은 지식을 공유받음.</p>
+        <span class="bridge-note">공유 지식 반영됨</span>
+      </div>
+    </div>
+
+    <div class="arrow">
+      <div class="line"></div>
+      <p class="label">각 세션이 응답이 필요한 순간<br>조립된 프롬프트를 API로 전달</p>
+      <div class="caret"></div>
+    </div>
+
+    <div class="node">
+      <p class="tag">두뇌 · 외부 서비스</p>
+      <h2>LLM API<br><span style="font-weight:400; font-size:15px; color:var(--ink-dim);">(설정한 provider — Claude 등)</span></h2>
+      <p>실제로 "생각해서" 답을 만드는 부분. 팀 지능 레이어가 추가한 맥락이 있든 없든, 여기서 하는 일 자체는 동일 — 프롬프트를 받아 답을 생성.</p>
+      <span class="role">답변 생성만 담당</span>
+    </div>
+  </div>
+
+  <div class="note">
+    <strong>이전 버전과 달라진 점</strong> — Hermes 혼자였을 땐 세션이 대화방 단위로 완전히 격리됐다. 팀 지능 레이어가 그 사이에서 "이건 팀 지식으로 남길만한가"(①)를 판별하고, 구조화해서(②) 저장한 뒤, 권한 범위 안에서(③) 다른 팀원의 세션에도 주입한다 — 이 ①②③이 PLAN.md에서 말하는 "아무도 안 만든 새 부위"다.
+  </div>
+</div>

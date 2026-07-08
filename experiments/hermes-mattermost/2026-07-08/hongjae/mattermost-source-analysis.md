@@ -19,6 +19,34 @@ API 연동만)과 방향이 안 맞는다 — 그래서 `public/`만 본 건 시
 
 ---
 
+## 0. 레포 전체 구조 — 뭘 안 봤고 왜 안 봤는가
+
+`mattermost/mattermost` 레포는 `server/` 말고도 여러 최상위 폴더가 있다.
+우리가 안 본 것들과 그 이유를 정리하면:
+
+| 폴더 | 내용 | 우리가 본 것과 무관한 이유 |
+|---|---|---|
+| `webapp/` | 공식 웹 클라이언트(React) 소스 | 우리는 이 화면을 그대로 쓰기만 함 — 우리가 새로 만들 부분이 아님 |
+| (모바일 앱, 보통 별도 레포) | 공식 모바일 앱 | 마찬가지로 클라이언트단, 우리와 무관 |
+| `e2e-tests/` | Mattermost 자체 테스트 코드 | Mattermost 팀의 QA용, 우리 프로젝트엔 참고 가치 없음 |
+| `server/channels/`, `server/services/` 등 | 서버 내부 구현(핸들러, DB 쿼리, 비즈니스 로직) | API 연동만 하는 우리 입장에선 결과(응답 형식)만 알면 되고, 내부에서 어떻게 처리하는지는 볼 필요 없음 |
+
+**우리가 집중해서 본 것 — `server/public/`**: Mattermost가 "외부에서
+쓰라"고 공식적으로 노출한 부분만 여기 모여 있다. 구체적으로:
+
+- `server/public/model/` — REST API가 주고받는 데이터 구조 (`channel.go`,
+  `post.go`, `websocket_message.go`, `permission.go`, `role.go` 등)
+- `server/public/plugin/` — 플러그인이 구현해야 할 인터페이스(`hooks.go`)
+
+**코드 대신 봐도 되는 대안 — 공식 API 문서**: 지금처럼 설계 단계에서
+"뭘 할 수 있는지" 파악할 땐 소스를 직접 읽는 게 맞지만, 나중에 실제
+구현 단계에서 "이 엔드포인트에 어떤 파라미터를 넣어야 하는지" 같은
+디테일을 찾을 땐 Mattermost가 공개한 REST API 레퍼런스(OpenAPI 스펙
+기반)를 보는 게 소스 읽는 것보다 더 편하다 — 코드 분석은 "설계 근거
+확보용", API 문서는 "실제 구현할 때 참고서용"으로 역할이 다르다.
+
+---
+
 ## 1. 플러그인 시스템 (hooks.go)
 
 `server/public/plugin/hooks.go` 에 정의된 Hooks 인터페이스에 **40개 이상의

@@ -820,20 +820,16 @@ ol {
   height: 100vh;
   height: 100dvh;
   overflow-y: scroll;
-  /* proximity(가까우면 붙음): 일반 섹션은 화면 단위로 붙되, 기능 가로 슬라이드
-     구간은 자유롭게 통과할 수 있어야 하므로 mandatory(강제)는 쓰지 않는다. */
-  scroll-snap-type: y proximity;
   /* scroll-behavior: smooth는 휠 스크롤을 굼뜨게 만들어 제거 (앵커 이동은 JS로 처리) */
   scroll-padding-top: 0;
 }
 
-/* 일반 섹션 한 개 = 한 화면 */
+/* 일반 섹션 한 개 = 한 화면 분량(최소 높이). 스냅 없이 자연스럽게 이어서 스크롤된다. */
 .panel {
-  scroll-snap-align: start;
-  scroll-snap-stop: always;
-  height: 100vh;
-  height: 100dvh;
-  overflow-y: auto;
+  height: auto;
+  min-height: 100vh;
+  min-height: 100dvh;
+  overflow: visible;
 }
 .panel > section,
 .panel > footer,
@@ -887,14 +883,6 @@ ol {
 
 /* 모바일: 가로 슬라이드를 끄고 평범한 세로 스크롤로 (가로 조작이 어색함) */
 @media (max-width: 900px) {
-  .snap {
-    scroll-snap-type: none;
-  }
-  .panel {
-    height: auto;
-    min-height: 100dvh;
-    overflow: visible;
-  }
   .features {
     height: auto;
   }

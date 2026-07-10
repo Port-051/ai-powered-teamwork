@@ -88,13 +88,15 @@
   - [ ] "Innovation Sandbox 사용자 가이드" 문서의 제약사항(예산 상한/리소스 제한/계정 만료일 등) 확인 필요.
 - **연결점**: 8/16 MVP까지 필요한 "상시 호스팅 서버"(위 "로컬 실습 한계 → 상시 호스팅 서버 필요" 항목)를 이 활동비 AWS 계정에 올릴 수 있는지가 자연스러운 후속 검토 대상.
 
-## 랜딩페이지 프레임워크/호스팅 재검토 — React+AWS vs Next.js+Vercel — ✅ 2026-07-10 Next.js 전환 완료(배포는 미완)
-- 2026-07-09 결정(`decisions.md`)으로 Vite 기반 스캐폴딩을 채택했고, 2026-07-10 기준 React + AWS(CloudFront)로 1차 배포까지 완료됨(`https://d35i71sym3m7f7.cloudfront.net/`).
+## 랜딩페이지 프레임워크/호스팅 재검토 — React+AWS vs Next.js+Vercel — ✅ 2026-07-10 전환·배포 완료
+- 2026-07-09 결정(`decisions.md`)으로 Vite 기반 스캐폴딩을 채택했고, 2026-07-10 기준 React + AWS(CloudFront)로 1차 배포까지 완료됨(`https://d35i71sym3m7f7.cloudfront.net/`, **더 이상 최신본 아님, 아래 참고**).
 - SEO 최적화(순수 CSR이라 크롤러가 빈 페이지로 인식, robots.txt/sitemap.xml 부재)를 이유로 Next.js + Vercel로 전환 결정(2026-07-10 김선만 멘토링 후속).
-- **코드 전환 완료(여운호/Claude)**: `landing/`을 Vite → Next.js(App Router)로 마이그레이션. App.tsx 등 인터랙션 있는 컴포넌트는 `"use client"`로 표시했지만 Next.js는 클라이언트 컴포넌트도 최초 요청 시 서버에서 완성된 HTML로 렌더링해줘서 SEO 문제는 해결됨. `npm run build` 결과 `/`가 정적(Static) 프리렌더링(SSG)으로 확인됨, 로컬 `next start`로 실행해 실제 HTML에 `<h1>`·meta description이 들어있는 것도 확인함. `public/robots.txt` 추가.
-- [ ] **미완료: 실제 Vercel 배포는 아직 안 함** — GitHub 레포를 Vercel 계정에 연결하는 절차(대시보드 로그인 필요)라 Claude가 대신 할 수 없음. 팀원 중 한 명이 Vercel 계정으로 `landing/` 레포를 연결해야 함 (Root Directory를 `landing`으로 지정).
-- [ ] 배포 후 기존 CloudFront URL(`https://d35i71sym3m7f7.cloudfront.net/`)이 이미 어딘가 공유됐다면 새 Vercel URL로 교체 안내 필요.
-- [ ] AWS S3/CloudFront 리소스 정리 여부(비용 관점) 팀 확인 필요 — 당장 삭제하지 않음, Next.js 전환이 실제 배포까지 검증된 뒤 정리.
+- **코드 전환 완료(여운호/Claude)**: `landing/`을 Vite → Next.js(App Router)로 마이그레이션. App.tsx 등 인터랙션 있는 컴포넌트는 `"use client"`로 표시했지만 Next.js는 클라이언트 컴포넌트도 최초 요청 시 서버에서 완성된 HTML로 렌더링해줘서 SEO 문제는 해결됨. `npm run build` 결과 `/`가 정적(Static) 프리렌더링(SSG)으로 확인됨. `public/robots.txt`, `next/og` 기반 favicon·og:image·twitter:card 추가.
+- **레포 구조 이슈**: `Port-051` 조직이 GitHub Free 플랜이라 private 레포 fork 자체가 플랫폼 차원에서 막혀 있고(설정 토글 문제 아님), Vercel Hobby(무료) 플랜도 "조직 소유 private 레포"는 못 가져옴. → 조직 레포를 public으로 돌리는 건 미해결 Slack 토큰 노출 이슈(아래 항목) 때문에 보류하고, 대신 `landing/`만 `git subtree split`으로 뽑아 여운호 개인 GitHub 계정의 별도 private 레포(`unhoyeo/teambrain-landing`)로 옮겨 그걸 Vercel에 연결함. **이 개인 레포는 fork가 아니라 일회성 복사본이라 조직 레포와 자동 동기화되지 않음** — `landing/` 코드를 고칠 때마다 같은 방식(subtree split + push)으로 다시 동기화해야 배포에 반영됨.
+- **✅ 2026-07-10 배포 완료**: `https://teambrain-landing.vercel.app/` — HTTP 200, `<h1>`·meta description 정상 서버 렌더링 확인. Vercel 환경변수 `NEXT_PUBLIC_SITE_URL=https://teambrain-landing.vercel.app`를 등록해 og:image가 배포마다 바뀌는 임시 URL이 아니라 이 고정 도메인을 가리키도록 처리(안 했으면 Vercel 프리뷰 배포 보호 기능 때문에 og:image가 302로 막혀 소셜 공유 미리보기가 깨짐 — 실제로 재현·확인함).
+- [ ] 기존 CloudFront URL(`https://d35i71sym3m7f7.cloudfront.net/`)이 이미 어딘가 공유됐다면 새 Vercel URL로 교체 안내 필요.
+- [ ] AWS S3/CloudFront 리소스 정리 여부(비용 관점) 팀 확인 필요 — 당장 삭제하지 않음.
+- [ ] "운영체제 제한 없음" 문구는 아직 랜딩페이지에 반영 안 됨 (`schedule.md` 7/16 항목 참고).
 - 참고: `landing/src/components/*.tsx`, `content.ts`, `styles.css`에 아직 커밋 안 된 카피 수정(스태시 2건, `git stash list`)이 남아있음 — 이번 마이그레이션은 그 이전 커밋 상태 기준으로 진행했으므로, 스태시 내용은 별도로 검토해서 새 Next.js 구조 위에 재적용해야 함.
 
 ## 참고

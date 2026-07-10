@@ -1,3 +1,5 @@
+"use client";
+
 import { useReveal } from "./hooks/useReveal";
 import Nav from "./components/Nav";
 import Hero from "./components/Hero";

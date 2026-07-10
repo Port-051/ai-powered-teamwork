@@ -13,7 +13,7 @@
 ### 7/16까지 (중간평가까지 MVP 배포, 2026-07-10 김선만 멘토링에서 재확인)
 - **헤르메스 + Mattermost — Oracle Cloud 상시 호스팅**
 - **팀원별 봇 생성** — 개별 프로필 분리
-- **랜딩페이지 개선** — "운영체제 제한 없음(모든 핸드폰/윈도우즈/아이폰/리눅스)" 문구 추가. 현재 배포본: `https://d35i71sym3m7f7.cloudfront.net/` (React + AWS/CloudFront) — Next.js + Vercel 전환 여부는 미정 (`open-issues.md` 참고)
+- **랜딩페이지 개선** — "운영체제 제한 없음(모든 핸드폰/윈도우즈/아이폰/리눅스)" 문구는 아직 미반영. ✅ Next.js + Vercel 전환 완료(2026-07-10): 새 배포 주소 `https://teambrain-landing.vercel.app/` (기존 AWS/CloudFront `https://d35i71sym3m7f7.cloudfront.net/`는 더 이상 최신본 아님, 상세는 `open-issues.md` 참고)
 - **기획안 완성**
 - **Codex 연동** — OAuth 방식·API 방식 둘 다 붙이기
 - 우선순위: 완성도보다 "실제로 돌아가는 배포본"을 먼저 만드는 쪽에 무게

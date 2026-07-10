@@ -2,9 +2,7 @@ import { useReveal } from "./hooks/useReveal";
 import Nav from "./components/Nav";
 import Hero from "./components/Hero";
 import ProblemSection from "./components/ProblemSection";
-import InMessengerAI from "./components/InMessengerAI";
-import TeamKnowledge from "./components/TeamKnowledge";
-import PersonalAI from "./components/PersonalAI";
+import FeatureDeck from "./components/FeatureDeck";
 import Trust from "./components/Trust";
 import Benefits from "./components/Benefits";
 import Faq from "./components/Faq";
@@ -16,17 +14,29 @@ export default function App() {
   return (
     <>
       <Nav />
-      <main>
-        <Hero />
-        <ProblemSection />
-        <InMessengerAI />
-        <TeamKnowledge />
-        <PersonalAI />
-        <Trust />
-        <Benefits />
-        <Faq />
-      </main>
-      <Footer />
+      {/* 화면 단위로 딱딱 고정되는 스냅 스크롤 컨테이너 */}
+      <div className="snap">
+        <div className="panel">
+          <Hero />
+        </div>
+        <div className="panel">
+          <ProblemSection />
+        </div>
+        {/* 기능 ①~③ — 가로 슬라이드 (내부에 3화면) */}
+        <FeatureDeck />
+        <div className="panel">
+          <Trust />
+        </div>
+        <div className="panel">
+          <Benefits />
+        </div>
+        <div className="panel">
+          <Faq />
+        </div>
+        <div className="panel panel--end">
+          <Footer />
+        </div>
+      </div>
     </>
   );
 }

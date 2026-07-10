@@ -146,7 +146,6 @@ export const benefits = {
     { icon: "⏱️", title: "온보딩 시간 급감" },
     { icon: "🤝", title: "쓸수록 잘 맞는 비서" },
     { icon: "🛡️", title: "데이터가 밖으로 안 나감" },
-    { icon: "💸", title: "인원 늘어도 요금 폭탄 없음" },
   ],
 };
 

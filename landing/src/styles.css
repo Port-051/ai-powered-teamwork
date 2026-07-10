@@ -31,8 +31,11 @@
   box-sizing: border-box;
 }
 
-html {
-  scroll-behavior: smooth;
+html,
+body {
+  height: 100%;
+  /* 화면 단위 스냅 스크롤은 .snap 컨테이너가 담당하므로 body 자체는 스크롤하지 않는다 */
+  overflow: hidden;
 }
 
 body {
@@ -173,8 +176,10 @@ ol {
    네비게이션
    ========================================================= */
 .nav {
-  position: sticky;
+  position: fixed;
   top: 0;
+  left: 0;
+  right: 0;
   z-index: 50;
   background: rgba(255, 255, 255, 0.82);
   backdrop-filter: saturate(180%) blur(12px);
@@ -807,6 +812,116 @@ ol {
   color: #6b769a;
   max-width: 640px;
 }
+
+/* =========================================================
+   화면 단위 스냅 스크롤 + 기능 가로 슬라이드
+   ========================================================= */
+.snap {
+  height: 100vh;
+  height: 100dvh;
+  overflow-y: scroll;
+  /* proximity(가까우면 붙음): 일반 섹션은 화면 단위로 붙되, 기능 가로 슬라이드
+     구간은 자유롭게 통과할 수 있어야 하므로 mandatory(강제)는 쓰지 않는다. */
+  scroll-snap-type: y proximity;
+  /* scroll-behavior: smooth는 휠 스크롤을 굼뜨게 만들어 제거 (앵커 이동은 JS로 처리) */
+  scroll-padding-top: 0;
+}
+
+/* 일반 섹션 한 개 = 한 화면 */
+.panel {
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+  height: 100vh;
+  height: 100dvh;
+  overflow-y: auto;
+}
+.panel > section,
+.panel > footer,
+.panel > * {
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.panel--end {
+  height: auto;
+  min-height: 100dvh;
+}
+.panel--end > * {
+  min-height: 0;
+}
+
+/* 기능 ①~③ 가로 슬라이드: 세로로 300vh를 지나가는 동안 안쪽 트랙이 가로로 밀린다 */
+.features {
+  position: relative;
+  height: 300vh;
+  height: 300dvh;
+}
+.features__viewport {
+  position: sticky;
+  top: 0;
+  width: 100%;
+  height: 100vh;
+  height: 100dvh;
+  overflow: hidden;
+}
+.features__track {
+  display: flex;
+  height: 100%;
+  width: 300%; /* 화면 3개분 (뷰포트 폭 기준) */
+  will-change: transform;
+}
+.features__track > section {
+  flex: 0 0 33.3333%; /* 트랙(300%)의 1/3 = 화면 한 개 폭 */
+  height: 100%;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+/* 가로 슬라이드 안에서는 등장 애니메이션을 항상 보이게(가려져 있어 트리거가 안 될 수 있음) */
+.features .reveal {
+  opacity: 1;
+  transform: none;
+}
+
+/* 모바일: 가로 슬라이드를 끄고 평범한 세로 스크롤로 (가로 조작이 어색함) */
+@media (max-width: 900px) {
+  .snap {
+    scroll-snap-type: none;
+  }
+  .panel {
+    height: auto;
+    min-height: 100dvh;
+    overflow: visible;
+  }
+  .features {
+    height: auto;
+  }
+  .features__viewport {
+    position: static;
+    height: auto;
+    overflow: visible;
+  }
+  .features__track {
+    width: auto;
+    flex-direction: column;
+    transform: none !important;
+  }
+  .features__track > section {
+    flex: none;
+    width: auto;
+    height: auto;
+    overflow: visible;
+  }
+  .features__snap {
+    display: none;
+  }
+}
+
+/* 모션 최소화 설정: 스냅·가로 슬라이드 모두 끄고 평범한 스크롤 */
+/* 모션 최소화 설정에서도 가로 슬라이드는 그대로 유지한다(모두에게 강제).
+   등장 페이드만 끄는 규칙은 파일 하단의 reduced-motion 블록에서 처리. */
 
 /* =========================================================
    반응형

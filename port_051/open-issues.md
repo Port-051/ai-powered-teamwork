@@ -1,5 +1,10 @@
 # 팀 공유 미해결 이슈
 
+## ⚠️ OpenRouter API 키 노출 — 재발급 확인 필요 (2026-07-10 발생, 같은 날 로그 처리 중 발견)
+- 신홍재가 본인 GCP Mattermost 서버에 Hermes를 연동하는 과정에서 OpenRouter API 키를 Claude Code 대화창에 직접 붙여넣었고, 그 키 일부 조각(`sk-or-v1-4f82...`, 전체 키는 아니고 앞부분만)이 그대로 로그 파일(`log/raw/shj5771/2026-07-10/19-59-10.md`)에 남아 이미 GitHub 원격 저장소(main, 커밋 `017d757`)에 올라간 상태.
+- Claude가 그 자리에서 즉시 키 폐기(revoke) 후 재발급을 권고했으나, **실제로 재발급했는지는 로그만으로 확인 불가** — 아래 Slack 토큰 건과 동일 패턴.
+- [ ] 신홍재: 해당 OpenRouter 키를 실제로 재발급(revoke 후 신규 발급)했는지 확인 필요.
+
 ## ⚠️ Slack 토큰 노출 — 재발급 확인 필요 (2026-07-07 발생, 2026-07-09 로그 처리 중 발견)
 - 신홍재가 Hermes↔Slack PoC 토큰 발급 중 실제 토큰 값(사용자 토큰 `xoxe.xoxp-` 형식, 값 자체는 여기 기록하지 않음)을 Claude Code 대화창에 두 차례 붙여넣었고, 그 로그가 자동 push 정책으로 그대로 GitHub 원격 저장소(main, 커밋 `75fbf51`)에 이미 올라가 있음을 확인함.
 - Claude가 그 자리에서 즉시 재발급(무효화)을 안내했으나, **실제로 재발급했는지는 로그만으로 확인 불가**.
@@ -30,6 +35,10 @@
 - **미결정 사항 (8월 재결정 대상, PLAN.md Phase 8에 추가 검토 필요)**: A안 — Hermes 내장 어댑터를 그대로/포크해서 쓰고 팀 지능 레이어를 플러그인·이벤트 훅으로 끼워넣기(공수 절감) vs B안 — 기존 계획대로 우리가 얇은 어댑터를 직접 짜서 그 사이에서 팀 지능 레이어가 가로채기(제어권 큼). 라이선스(별도 프로세스 원칙)는 두 안 다 문제없음.
 - **2026-07-08 소스 레벨 분석으로 A안 근거 보강 (신홍재)**: Mattermost·Hermes 소스를 직접 읽어 `experiments/hermes-mattermost/2026-07-08/hongjae/`(`mattermost-source-analysis.md`, `hermes-source-analysis.md`)에 정리. 핵심 — **Hermes의 메모리 Provider 인터페이스(`agent/memory_provider.py`)가 코드 수정 없이 꽂을 수 있는 공식 확장점**(`prefetch`=턴 시작 전 팀지식 주입, `sync_turn`=턴 종료 후 저장·판별)이라 "A안 = 새 memory provider 플러그인 하나 추가"로 구현 가능. Mattermost 어댑터는 이미 1,281줄 완성이라 B안은 이걸 처음부터 재구현하는 부담. **제약: 외부 메모리 provider는 프로세스당 하나만 허용**(Honcho와 동시 사용 불가 — 8월 재결정 시 함께 검토). Mattermost 플러그인 훅(서버 프로세스 내장)은 AGPL 파생저작물 리스크가 있으므로 A안의 "훅"은 반드시 Hermes 자체 프로세스의 이벤트 훅/REST·WebSocket 구독을 의미해야 함(용어 혼동 주의). 채널 타입(D/G vs O/P)은 프라이버시 필터 1차 신호로, 채널 멤버십은 접근제어로 그대로 상속 가능(재구현 불필요).
 - **2026-07-09 갱신 (여운호·김동연)**: 위 A/B안 프레이밍이 `port_051/mattermost-hermes-integration-decision.md`에서 5가지(어댑터 새로 짜기/코어 포크/api_server 단독/이벤트 훅/memory-provider)로 더 세분화됨 — memory-provider가 라이선스·실익 양면에서 가장 유력하다는 근거는 마련됐으나 아직 팀 확정은 아님(`decisions.md` 2026-07-09 참고). **단, 이 문서는 "멘션→응답" 턴 단위 흐름을 전제로 한다.** 신홍재가 별개로 제기한 논점: 채널 전체를 멘션 여부와 무관하게 상시 관찰해 지식화하려면(초안 C의 "채널 전체 상시 수집" 방향), 어느 통합 지점을 택하든 Mattermost API를 별도로 구독하는 로직이 필요할 수 있다 — memory-provider의 `prefetch`/`sync_turn`은 Hermes가 턴을 처리할 때만(즉 멘션이 와야) 호출되기 때문. 이 관점은 아직 `mattermost-hermes-integration-decision.md`에 반영되지 않았고, 8월 재결정 시 함께 짚어야 함.
+- **2026-07-10 실측 검증 — 개인화 방법 A(팀원별 봇+독립 프로세스) 및 memory-provider 프로토타입 둘 다 로컬에서 통과 (여운호)**: `@hermes-test1`/`@hermes-test2` 두 봇 계정으로 (1)대화기록/장기기억 완전 분리 (2)DM 분리 및 미허용 사용자 무응답(기존 문서의 "페어링 코드 안내" 추측은 틀렸음 — 실제로는 조용히 무시됨, 관련 문서 정정 필요) (3)동시성 문제 없음 (4)SOUL.md 성격 커스터마이징 반영 (5)재시작 내구성(launchd) 5개 항목 전부 검증 통과. 이어서 `plugins/memory/teambrain/__init__.py`에 memory-provider 최소 프로토타입을 실제로 작성해 `sync_turn`/`prefetch` 파이프라인이 코드 레벨로 정상 동작함을 확인(다만 무료 모델 크레딧 소진으로 "모델이 실제로 그 정보를 활용해 답하는지"의 최종 확인은 재검증 필요).
+- **2026-07-10 방법 A 재확인 + 멀티플렉싱(방법 B) 구조적 결함 확정 (김동연)**: 자원 절감을 위해 방법 B(게이트웨이 하나로 여러 프로파일 멀티플렉싱)를 시도했으나, 멀티플렉싱 모드에서는 secondary profile의 Mattermost 사용자 허용목록(`MATTERMOST_ALLOWED_USERS`)이 인가 함수(`gateway/authz_mixin.py`의 `_is_user_authorized`)에서 무시되고 항상 default profile의 허용목록만 전체 봇에 적용되는 버그를 코드 근거+실측으로 확정(`experiments/hermes-mattermost/2026-07-10/rlaehddus302/multiplex-mattermost-allowed-users-bug.md`). **결론: 팀 규모(3명)에서 "팀원별 봇"은 방법 A(프로파일마다 완전히 독립된 프로세스, 각자 다른 Mattermost 봇 토큰)로 가야 한다** — 여운호의 실측 결과와 함께 방법 A가 사실상 확정됨.
+- **Mattermost 어댑터의 구조적 한계 확인 (2026-07-10, 김동연)** — "팀 공유 인텔리전스 레이어를 직접 만들어야 하는 이유"의 구체적 근거: (a) 히스토리 백필 기능이 없어 봇 설치 이전 과거 대화를 소급해서 읽을 수 없음 (b) `MATTERMOST_REQUIRE_MENTION`(기본 on) 필터로 멘션 안 된 메시지는 어댑터 단(`plugins/platforms/mattermost/adapter.py:849`)에서 즉시 폐기됨(예외: DM, `MATTERMOST_FREE_RESPONSE_CHANNELS` 지정 채널) — 채널 전체 맥락을 상시 기억하는 게 아니라 멘션된 것만 처리.
+- **김동연이 위에서 발견한 authz 격리 버그를 Hermes 업스트림(NousResearch/hermes-agent)에 PR #61985로 제출**(2026-07-10, 진행 중) — 팀 코드 변경은 아니지만 TeamBrain이 의존하는 오픈소스에 대한 대외 기여이며, 머지되면 우회 대응 문서를 갱신해야 함.
 
 ## 로컬 실습 한계 → 상시 호스팅 서버 필요 (2026-07-07, 여운호)
 - 로컬 Hermes 게이트웨이(Slack/Mattermost 둘 다)는 노트북이 켜져 있고 네트워크가 연결된 동안만 동작 — 절전·와이파이 단절 시 상시 서비스 등록을 해둬도 함께 죽음.
@@ -98,6 +107,10 @@
 - [ ] AWS S3/CloudFront 리소스 정리 여부(비용 관점) 팀 확인 필요 — 당장 삭제하지 않음.
 - [ ] "운영체제 제한 없음" 문구는 아직 랜딩페이지에 반영 안 됨 (`schedule.md` 7/16 항목 참고).
 - 참고: `landing/src/components/*.tsx`, `content.ts`, `styles.css`에 아직 커밋 안 된 카피 수정(스태시 2건, `git stash list`)이 남아있음 — 이번 마이그레이션은 그 이전 커밋 상태 기준으로 진행했으므로, 스태시 내용은 별도로 검토해서 새 Next.js 구조 위에 재적용해야 함.
+
+## OpenRouter 크레딧/요금제 — 신홍재 개인 프로토타입에서 실제로 막힘 (2026-07-10)
+- 신홍재가 본인 GCP Mattermost(`http://8.235.45.15:8065/`, 팀 URL 슬러그는 언더바 없는 `port051`로 접속해야 정상 동작 — `port_051`은 오류남) + 로컬 Hermes로 개인 봇 연동 프로토타입을 진행, 메시지 수신→응답 생성→전송 파이프라인 자체는 정상 동작 확인.
+- 다만 **OpenRouter 계정 크레딧 부족(`HTTP 402`)과 rate-limiting으로 실제 응답 생성 단계에서 막힘** — 팀 차원에서 OpenRouter 크레딧 충전 또는 무료/저비용 모델 대안을 정할 필요가 생김(`port_051/open-issues.md`의 "Nous Portal / 구독 재활용 비용 리스크" 항목과 같은 결의 문제).
 
 ## 참고
 - 위 docx 이슈들은 여러 팀원이 같은 파일을 동시에 손보면서 생긴 충돌/반복 수정의 결과이므로, 이어서 작업할 때는 `submission/reference/기획서_원본양식.docx`를 기준으로 다시 대조하고 시작하는 게 안전함.

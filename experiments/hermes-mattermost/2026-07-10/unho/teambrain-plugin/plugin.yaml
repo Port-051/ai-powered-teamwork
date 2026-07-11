@@ -1,0 +1,5 @@
+name: teambrain
+version: 0.1.0
+description: "TeamBrain — local shared team-knowledge store (MVP prototype, no external service)."
+pip_dependencies: []
+requires_env: []

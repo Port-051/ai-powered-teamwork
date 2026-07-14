@@ -53,3 +53,6 @@
 - **다음 주(~7/16 MVP 마감, `roadmap.md` Phase 3-1과 동일 시점) 목표 재확인**: 헤르메스 + Mattermost를 Oracle Cloud에 호스팅 + 팀원별 봇 생성(개별 프로필) + 랜딩페이지 개선 + 기획안 완성 + Codex 연동을 OAuth·API 방식 둘 다 붙이기.
 - **랜딩페이지에 "운영체제 제한 없음" 문구 추가 확정**: 모든 핸드폰/윈도우즈/아이폰/리눅스에서 접속 가능하다는 점을 어필 (Mattermost 기반이라 클라이언트 제약이 없다는 논리).
 - **관리자페이지 기능 범위(미래, MVP 이후) 정리**: ①봇별 메시지 접근 권한 제어 ②관리자 계정·팀원 계정과 봇 생성 ③API 연동 + 디파짓(사용량 기반 과금, 먼 훗날) ④오픈소스화(1차 홍보 대상: 네이버·카카오·삼성전자·LG·SK·현대 등, 기술 고도화 병행). — MVP 범위 밖, `roadmap.md` Phase 4 이후 백로그로 취급.
+
+## 2026-07-11
+- **TeamBrain memory-provider 프로덕션 버전 착수(신홍재)**: 07-10 여운호 프로토타입(프라이버시 필터 없음)을 `teambrain/memory_provider/`로 정식화 — `chat_type == "channel"`(완전 공개 채널)일 때만 팀 공유 저장소에 기록, DM·비공개 채널·누락값은 fail-closed로 저장 안 함(roadmap.md Phase 3-4 완료 기준 충족). Mattermost 검색 API 위임 방식(초안 D)도 검토했으나 팀원별 개인 토큰 발급이 추가로 필요해 이번엔 채택 안 함. 상세 근거·한계·범위밖 항목은 `port_051/teambrain-memory-provider-mvp-visibility-decision.md` 참고.

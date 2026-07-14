@@ -62,7 +62,7 @@ turn_assistant="$(jq -rs '
 } > "$out"
 
 # 시크릿으로 보이는 패턴이 있으면 커밋/푸시하지 않고 파일만 남겨서 사람이 직접 확인하게 한다.
-secret_pattern='AKIA[0-9A-Z]{16}|sk-[A-Za-z0-9]{20,}|-----BEGIN [A-Z ]*PRIVATE KEY-----|ghp_[A-Za-z0-9]{30,}|xox[baprs]-[A-Za-z0-9-]{10,}'
+secret_pattern='AKIA[0-9A-Z]{16}|sk-[A-Za-z0-9-]{20,}|-----BEGIN [A-Z ]*PRIVATE KEY-----|ghp_[A-Za-z0-9]{30,}|xox[baprs]-[A-Za-z0-9-]{10,}'
 if grep -Eiq "$secret_pattern" "$out"; then
   echo '{"systemMessage": "log/raw에 비밀키로 보이는 내용이 감지되어 이 턴은 자동 push하지 않았습니다. 내용을 확인 후 직접 처리해주세요."}'
   exit 0

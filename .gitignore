@@ -6,3 +6,7 @@ node_modules/
 __pycache__/
 *.pyc
 .DS_Store
+# 리마인더 예약 DB (기본 위치는 ~/.teambrain/ 이지만, 레포 안에 두더라도 올라가지 않게)
+*.db
+*.db-wal
+*.db-shm

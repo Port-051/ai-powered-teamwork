@@ -62,4 +62,8 @@
 
 ## 현재 상태
 
-기획 단계입니다. 아직 소스 코드는 없으며, `submission/`에 SW Maestro 제출용 초안 문서들이 있습니다.
+대부분 기획 단계이고, `submission/`에 SW Maestro 제출용 초안 문서들이 있습니다. 실제로 돌아가는 코드는 아래와 같습니다.
+
+- [`teambrain/reminder/`](./teambrain/reminder/README.md) — 특정 날짜/시간에 슬랙으로 리마인드 알림을 보내는 기능. `@봇 내일 오후 3시 멘토링 준비물 챙기기` 한 줄로 예약됩니다.
+- `landing/` — 랜딩페이지 (Next.js, Vercel 배포: https://teambrain-landing.vercel.app/)
+- `experiments/` — 팀원별 Hermes·Mattermost 실습 기록 (제품 코드 아님)

@@ -4,7 +4,16 @@
 
 ## 프로젝트 현황
 
-이 레포에는 현재 **기획 문서만** 있고, 실제 소스 코드는 아직 없다. 그래서 빌드/린트/테스트 명령도 없다. 구현이 시작되면 이 파일에 실제 명령어와 아키텍처 설명을 채워 넣어야 한다.
+이 레포는 대부분 기획 문서지만, 아래 코드가 실제로 돌아간다. 새 코드를 추가하면 이 목록과 명령어도 같이 갱신한다.
+
+| 위치 | 무엇 | 명령 (레포 맨 위 폴더에서) |
+|---|---|---|
+| `teambrain/reminder/` | 특정 날짜/시간에 슬랙으로 리마인드 알림 (Python, 표준 라이브러리만) | `python3 -m teambrain.reminder --help`<br>테스트: `python3 -m unittest discover -s teambrain/reminder/tests -t .` |
+| `landing/` | 랜딩페이지 (Next.js, Vercel 배포) | `cd landing && npm install && npm run dev` |
+| `experiments/` | 팀원별 실습 기록·프로토타입 (제품 코드 아님) | — |
+
+- `teambrain/`은 PLAN.md Phase 6-1 원칙에 따라 **메신저 서버를 건드리지 않고 공개 API만 호출하는 별도 프로세스**로만 만든다. Mattermost 플러그인 형태는 금지.
+- 파이썬 코드는 **추가 설치 없이 돌아가는 것을 기본**으로 한다 (표준 라이브러리 우선). 외부 패키지가 꼭 필요하면 선택 기능으로 분리하고 `requirements.txt`에 이유를 적는다.
 
 ## 이 프로젝트는 무엇인가
 
